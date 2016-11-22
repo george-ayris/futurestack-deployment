@@ -5,6 +5,10 @@ services:
     container_name: "api"
     ports:
       - "8000:5000"
+    env_file:
+      - .env
+    depends_on:
+      - consul2
   consul1:
     image: "progrium/consul:latest"
     container_name: "consul1"
