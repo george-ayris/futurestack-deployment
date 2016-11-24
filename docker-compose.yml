@@ -9,6 +9,10 @@ services:
       - .env
     depends_on:
       - consul2
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
   consul1:
     image: "progrium/consul:latest"
     container_name: "consul1"
@@ -29,3 +33,22 @@ services:
     command: "-server -join consul1"
     depends_on:
       - consul1
+  elasticsearch:
+    image: elasticsearch
+    container_name: "elasticsearch"
+    ports:
+      - "9200:9200"
+  logstash:
+    image: logstash
+    container_name: "logstash"
+    ports:
+      - "12201:12201"
+      - "12201:12201/udp"
+    volumes: 
+      - ./config/logstash.conf:/conf/logstash.conf
+    command: "-f /conf/logstash.conf"
+  kibana:
+    image: kibana
+    container_name: "kibana"
+    ports:
+      - "5601:5601"
